@@ -1,26 +1,26 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addRequest, removeRequest } from "../utils/requestSlice";
 
 const Requests = () => {
  const dispatch = useDispatch();
  const requests = useSelector((state) => state.request);
- const [loading, setLoading] = useState(true);
- const [error, setError] = useState(null);
+
+
 
  const reviewRequest = async (status, _id) => {
   try {
-   await axios.post(
-    `http://localhost:3000/request/review/${status}/${_id}`,
-    {},
-    { withCredentials: true }
-   );
-   dispatch(removeRequest(_id));
-  } catch (err) {
-   console.error("Error reviewing request:", err);
+   const review = await axios.post("http://localhost:3000/request/review/" + status + "/" + _id, {}, {
+    withCredentials: true
+   })
+   console.log("success....")
+   dispatch(removeRequest(_id))
+  } catch (error) {
+   console.log(error);
   }
- };
+
+ }
 
  const fetchRequests = async () => {
   try {
@@ -29,12 +29,9 @@ const Requests = () => {
     { withCredentials: true }
    );
    dispatch(addRequest(data.data));
-   setError(null);
-  } catch (err) {
-   console.error("Error fetching requests:", err);
-   setError("Failed to load requests. Please try again later.");
-  } finally {
-   setLoading(false);
+
+  } catch (error) {
+   console.error("Error fetching requests:", error);
   }
  };
 
@@ -42,23 +39,15 @@ const Requests = () => {
   fetchRequests();
  }, []);
 
- if (loading) {
+ if (!requests) {
   return (
    <div className="flex justify-center items-center min-h-screen">
-    <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-gray-300"></div>
+    <h1 className="text-gray-400 text-xl">Loading requests...</h1>
    </div>
   );
  }
 
- if (error) {
-  return (
-   <div className="flex justify-center items-center min-h-screen">
-    <h1 className="text-red-500 text-xl">{error}</h1>
-   </div>
-  );
- }
-
- if (!requests || requests.length === 0) {
+ if (requests.length === 0) {
   return (
    <div className="flex justify-center items-center min-h-screen">
     <h1 className="text-gray-500 text-2xl font-semibold">No pending requests.</h1>
@@ -74,7 +63,7 @@ const Requests = () => {
    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     {requests.map((request) => {
      const { firstName, lastName, photoUrl, about, age } = request.fromUserId;
-     const { _id } = request;
+     const { _id } = request
 
      return (
       <div
@@ -103,16 +92,12 @@ const Requests = () => {
         <p className="text-gray-400 text-sm">{about}</p>
        </div>
        <div className="mt-6 flex justify-end space-x-4">
-        <ActionButton
-         onClick={() => reviewRequest("accepted", _id)}
-         color="green"
-         label="Accept"
-        />
-        <ActionButton
-         onClick={() => reviewRequest("rejected", _id)}
-         color="red"
-         label="Reject"
-        />
+        <button className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600" onClick={() => reviewRequest("accepted", _id)}>
+         Accept
+        </button>
+        <button className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600" onClick={() => reviewRequest("rejected", _id)}>
+         Reject
+        </button>
        </div>
       </div>
      );
@@ -121,14 +106,5 @@ const Requests = () => {
   </div>
  );
 };
-
-const ActionButton = ({ onClick, color, label }) => (
- <button
-  onClick={onClick}
-  className={`px-4 py-2 bg-${color}-500 text-white rounded-lg hover:bg-${color}-600 transition duration-300`}
- >
-  {label}
- </button>
-);
 
 export default Requests;
