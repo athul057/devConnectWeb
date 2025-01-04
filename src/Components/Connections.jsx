@@ -22,6 +22,9 @@ const Connections = () => {
  useEffect(() => {
   fetchConnections();
  }, []);
+ if (!connections) {
+  return;
+ }
 
  if (connections.length <= 0) {
   return <h1 className="font-semibold mt-6 text-center text-xl">You don't have any connections....</h1>

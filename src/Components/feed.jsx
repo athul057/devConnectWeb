@@ -24,8 +24,13 @@ const Feed = () => {
 
   getFeedData();
  }, [])
+ if (!users) {
+  return <h1>Loading...</h1>
+ }
 
-
+ if (users.length <= 0) {
+  return <h1>Nothing to show 😥</h1>
+ }
  return (
   users && (<div className='flex justify-center mt-5'>
 

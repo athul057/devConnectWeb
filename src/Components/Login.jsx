@@ -2,14 +2,14 @@ import { useState } from "react";
 import axios from "axios"
 import { useDispatch } from "react-redux";
 import { addItem } from "../utils/cartSlice";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
  const dispatch = useDispatch();
  const navigate = useNavigate();
  const [loginError, setLoginError] = useState("");
- const [emailId, setEmailId] = useState("athul@mail.com");
- const [password, setPassword] = useState("Athul@123");
+ const [emailId, setEmailId] = useState("luffy@mail.com");
+ const [password, setPassword] = useState("Luffy@123");
 
  //I  have to pass with credentilas=true to get my cookie and store it in my webbrowser other wise browser won't store the cookie in to the browser......
  const handleLogin = async () => {
@@ -56,6 +56,7 @@ const Login = () => {
 
        </label>
       </div>
+      <p>Not a user <Link to="/signup" className="text-blue-600 hover:text-blue-900">Signup</Link> ?</p>
       <p className="text-red-300">{loginError}</p>
       <div className="card-actions justify-center">
 
